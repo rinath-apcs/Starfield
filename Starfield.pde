@@ -42,7 +42,7 @@ void draw() {
 }
 
 class Particle {
-	protected float x, y, z, velocity, rotation, direction;
+	protected double x, y, z, velocity, rotation, direction;
 
 	public Particle(float x, float y, float z) {
 		this.x = x;
@@ -55,14 +55,14 @@ class Particle {
 	}
 
 	public Particle() {
-		this(0,0,0);
+		this(0,0, width/2.0);
 	}
 
 	public void draw() {
-		float vX, vY, vZ;
-		vX = velocity * cos(direction) * sin(rotation);
-		vY = velocity * cos(rotation) * cos(direction);
-		vZ = velocity * sin(rotation);
+		double vX, vY, vZ;
+		vX = velocity * Math.cos(direction) * Math.sin(rotation);
+		vY = velocity * Math.cos(rotation) * Math.cos(direction);
+		vZ = velocity * Math.sin(rotation);
 		
 		x += vX;
 		y += vY;
@@ -72,7 +72,7 @@ class Particle {
 
 		fill(0);
 		noStroke();
-		ellipse(x + width/2, y + height/2, 5, 5);
+		ellipse((float) x + width/2, (float) y + height/2, 5, 5);
 	}
 
 	public void rotateY(float theta) {
