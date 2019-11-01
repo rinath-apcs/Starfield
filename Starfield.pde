@@ -1,6 +1,9 @@
 Particle[] particles;
+float distance;
+
 void setup() {
 	size(500, 500);
+	distance = 700;
 
 	particles = new Particle[100];
 
@@ -12,7 +15,21 @@ void setup() {
 }
 
 void draw() {
+	println(distance);
+
 	background(177);
+
+	if (keyPressed) {
+		switch(key) {
+			case ' ':
+			distance++;
+			break;
+			case BACKSPACE:
+			distance--;
+			break;
+		}
+	}
+	
 	for (Particle particle : particles) {
 		particle.draw();
 
@@ -42,7 +59,7 @@ void draw() {
 }
 
 class Particle {
-	protected double x, y, z, velocity, rotation, direction;
+	protected float x, y, z, velocity, azumith, theta;
 
 	public Particle(float x, float y, float z) {
 		this.x = x;
@@ -50,40 +67,42 @@ class Particle {
 		this.z = z;
 
 		velocity = random(20) - 10;
-		rotation = random(TWO_PI);
-		direction = random(TWO_PI);
+		azumith = random(TWO_PI);
+		theta = random(TWO_PI);
 	}
 
 	public Particle() {
-		this(0,0, width/2.0);
+		this(0,0, distance * 10);
 	}
 
 	public void draw() {
-		double vX, vY, vZ;
-		vX = velocity * Math.cos(direction) * Math.sin(rotation);
-		vY = velocity * Math.cos(rotation) * Math.cos(direction);
-		vZ = velocity * Math.sin(rotation);
+		float vX, vY, vZ;
+		vX = velocity * cos(azumith) * sin(theta);
+		vY = velocity * sin(azumith) * sin(theta);
+		vZ = velocity * cos(theta);
 		
 		x += vX;
 		y += vY;
 		z += vZ;
+ 
+		//velocity *= velocity > 0.05 ? .99 : 1;
+		velocity *= 0.95;
 
-		velocity *= velocity > 0.05 ? .99 : 1;
-
-		fill(0);
 		noStroke();
-		ellipse((float) x + width/2, (float) y + height/2, 5, 5);
-	}
 
-	public void rotateY(float theta) {
-		x = x * cos(theta) + z * sin(theta);
-		z = - x * sin(theta) + z * cos(theta);
+		float radius =  0.5 * (z / distance);
 
+		ellipse(x * (distance / z) + width / 2.0, y * (distance / z) + height / 2.0, radius, radius);
 	}
 
 	public void rotateX(float theta) {
 		y = y * cos(theta) - z * sin(theta);
 		z = y * sin(theta) + z * cos(theta);
+	}
+
+	public void rotateY(float theta) {
+		x = x * cos(theta) + z * sin(theta);
+		z = - x * sin(theta) + z * cos(theta);
 	}
 
 	public void rotateZ(float theta) {
@@ -95,7 +114,16 @@ class Particle {
 class OddballParticle extends Particle {
 	public OddballParticle() {
 		super();
+		velocity = 0;
 	}
+
+	@Override
+	public void draw() {
+		fill(0, 255, 0);
+		super.draw();
+		fill(0);
+	}
+
 }
 
 void mousePressed() {
