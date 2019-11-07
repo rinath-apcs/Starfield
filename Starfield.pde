@@ -17,7 +17,7 @@ void setup() {
 void draw() {
 	println(distance);
 
-	background(177);
+	background(177,177,177,19);
 
 	if (keyPressed) {
 		switch(key) {
@@ -56,6 +56,7 @@ void draw() {
 			}
 		}
 	}
+	particles[0].draw();
 }
 
 class Particle {
@@ -69,10 +70,10 @@ class Particle {
 		velocity = random(20) - 10;
 		azumith = random(TWO_PI);
 		theta = random(TWO_PI);
-	}
+	}	
 
 	public Particle() {
-		this(0,0, distance * 10);
+		this(0,0, width / 2.0);
 	}
 
 	public void draw() {
@@ -85,14 +86,10 @@ class Particle {
 		y += vY;
 		z += vZ;
  
-		//velocity *= velocity > 0.05 ? .99 : 1;
 		velocity *= 0.95;
-
 		noStroke();
-
-		float radius =  0.5 * (z / distance);
-
-		ellipse(x * (distance / z) + width / 2.0, y * (distance / z) + height / 2.0, radius, radius);
+		int radius = 5;
+		ellipse(x + width / 2.0, y + height / 2.0, radius, radius);
 	}
 
 	public void rotateX(float theta) {
@@ -130,4 +127,6 @@ void mousePressed() {
 	for (int i = 0; i < particles.length; i++) {
 		particles[i] = new Particle();
 	}
+	particles[0] = new OddballParticle();
+
 }
