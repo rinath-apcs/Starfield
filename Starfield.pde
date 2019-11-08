@@ -1,11 +1,10 @@
 Particle[] particles;
-float distance;
+final float rotationSpeed = PI/64.0;
 
 void setup() {
 	size(500, 500);
-	distance = 700;
 
-	particles = new Particle[100];
+	particles = new Particle[500];
 
 	for (int i = 0; i < particles.length; i++) {
 		particles[i] = new Particle();
@@ -15,65 +14,61 @@ void setup() {
 }
 
 void draw() {
-	println(distance);
+	background(177,177,177);
 
-	background(177,177,177,19);
+	sort(particles);
 
-	if (keyPressed) {
-		switch(key) {
-			case ' ':
-			distance++;
-			break;
-			case BACKSPACE:
-			distance--;
-			break;
-		}
-	}
-	
 	for (Particle particle : particles) {
 		particle.draw();
 
 		if (keyPressed) {
 			switch(key) {
 				case 'w':
-				particle.rotateX(PI/32.0);
+				particle.rotateX(rotationSpeed);
 				break;
 				case 's': 
-				particle.rotateX(-PI/32.0);
+				particle.rotateX(-rotationSpeed);
 				break;
 				case 'a': 
-				particle.rotateY(PI/32.0);
+				particle.rotateY(rotationSpeed);
 				break;
 				case 'd': 
-				particle.rotateY(-PI/32.0);
+				particle.rotateY(-rotationSpeed);
 				break;
 				case 'q': 
-				particle.rotateZ(PI/32.0);
+				particle.rotateZ(rotationSpeed);
 				break;
 				case 'e': 
-				particle.rotateZ(-PI/32.0);
+				particle.rotateZ(-rotationSpeed);
 				break;
 			}
 		}
 	}
-	particles[0].draw();
 }
 
 class Particle {
 	protected float x, y, z, velocity, azumith, theta;
+	protected int radius, col;
 
-	public Particle(float x, float y, float z) {
+	public Particle(float x, float y, float z, float velocity, float azumith, float theta) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 
-		velocity = random(20) - 10;
-		azumith = random(TWO_PI);
-		theta = random(TWO_PI);
+		this.velocity = velocity;
+		this.azumith = azumith;
+		this.theta = theta;
+
+		col = color(random(100), random(100), random(100));
+		radius = 4;
+	}
+
+	public Particle(float x, float y, float z) {
+		this(x, y, z, random(7, 10), random(TWO_PI), random(TWO_PI));
 	}	
 
 	public Particle() {
-		this(0,0, width / 2.0);
+		this(0,0,0);
 	}
 
 	public void draw() {
@@ -87,8 +82,9 @@ class Particle {
 		z += vZ;
  
 		velocity *= 0.95;
+		
+		fill(col);
 		noStroke();
-		int radius = 5;
 		ellipse(x + width / 2.0, y + height / 2.0, radius, radius);
 	}
 
@@ -106,21 +102,25 @@ class Particle {
 		x = x * cos(theta) - y * sin(theta);
 		y = x * sin(theta) + y * cos(theta);
 	}
+
+	public float getX() {
+		return x;
+	}
+
+	public Particle getCopy() {
+		return new Particle(x, y, z, velocity, azumith, theta);
+	}
 }
 
 class OddballParticle extends Particle {
 	public OddballParticle() {
 		super();
+
 		velocity = 0;
-	}
 
-	@Override
-	public void draw() {
-		fill(0, 255, 0);
-		super.draw();
-		fill(0);
+		col = color(0, 255, 0);
+		radius = 20;
 	}
-
 }
 
 void mousePressed() {
@@ -128,5 +128,17 @@ void mousePressed() {
 		particles[i] = new Particle();
 	}
 	particles[0] = new OddballParticle();
+}
 
+void sort(Particle[] particles) {
+	for (int i = 0; i < particles.length; i++) {
+		for (int j = i + 1; i < particles.length; i++) {
+			Particle temp;
+			if (particles[i].getX() < particles[j].getX()) {
+				temp = particles[i];
+				particles[i] = particles[j];
+				particles[j] = temp;
+			}
+		}
+	}
 }
