@@ -1,5 +1,5 @@
 Particle[] particles;
-final float rotationSpeed = PI/64.0;
+final float rotationSpeed = 0.005;
 
 void setup() {
 	size(500, 500);
@@ -107,8 +107,12 @@ class Particle {
 		return x;
 	}
 
-	public Particle getCopy() {
-		return new Particle(x, y, z, velocity, azumith, theta);
+	public int getRadius() {
+		return radius;
+	}
+
+	public float getFront() {
+		return getX() + getRadius();
 	}
 }
 
@@ -127,14 +131,14 @@ void mousePressed() {
 	for (int i = 0; i < particles.length; i++) {
 		particles[i] = new Particle();
 	}
-	particles[0] = new OddballParticle();
+	particles[250] = new OddballParticle();
 }
 
 void sort(Particle[] particles) {
 	for (int i = 0; i < particles.length; i++) {
 		for (int j = i + 1; i < particles.length; i++) {
 			Particle temp;
-			if (particles[i].getX() < particles[j].getX()) {
+			if (particles[i].getRadius() < particles[j].getRadius()) {
 				temp = particles[i];
 				particles[i] = particles[j];
 				particles[j] = temp;
